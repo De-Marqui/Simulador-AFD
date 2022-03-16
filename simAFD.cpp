@@ -81,7 +81,7 @@ void AFDReading(){
 							cout << "[ERROR -> CHAR != LOWER]" << endl;
 					} 
 				}
-				//bool containsDuplicates = (std::unique(userNumbers, end) != end);
+			
 		    
 				if ((unique(AFD.symbols.begin(), AFD.symbols.end()) != AFD.symbols.end())) 
 					cout << "[ERROR -> REPITED CHAR]" << endl;
