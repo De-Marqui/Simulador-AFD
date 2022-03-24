@@ -10,14 +10,14 @@ int main()
 	string cadeia = "";
 
 	while (option != 0) {
-		cout << "[Bem vindo, a seguir, temos algumas opções para escolher]" << endl;
+		cout << "[Welcome, below we have some options to choose from]" << endl;
 		cout << "---------------------------------------------------------" << endl;
-		cout << "| 1. Ler dados do AFD de arquivo" << endl
-			 << "| 2. Mostrar a quíntupla para o AFD lido" << endl
-			 << "| 3. Avaliar cadeias lidas de arquivo" << endl
-			 << "| 4. Avaliar novas cadeias pelo teclado" << endl
-			 << "| 0. Encerrar a aplicação" << endl << endl
-			 << endl << ">> Insira a opção: ";
+		cout << "| 1. Read AFD data from .txt file" << endl
+		     << "| 2. Show the quintuple for the read AFD .txt file" << endl
+		     << "| 3. Evaluate strings read from file" << endl
+		     << "| 4. Evaluate new strings by keyboard input" << endl
+		     << "| 0. close application" << endl << endl
+		     << endl << ">> Choose an option";
 
 		cin >> option;
 
@@ -44,8 +44,8 @@ int main()
 			{
 				while (cadeia != "RETURN")
 				{
-					cout << endl << "Se deseja voltar, digite RETURN";
-					cout << endl << "Digite a cadeia que deseja validar: ";
+					cout << endl << "If you want to go back to the main menu, type RETURN";
+					cout << endl << "Enter a string you want to validate: ";
 					cin >> cadeia;
 					if (cadeia != "RETURN")	
 						stringCheck(cadeia);
