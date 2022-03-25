@@ -1,8 +1,3 @@
-/*
-Guilherme Rodrigues Santos - 32012209
-Gustavo Hiroshi Yoshio - 32033273
-Victor De Marqui - 32014287
-*/
 #include "afd.hpp"
 #include <string>
 
