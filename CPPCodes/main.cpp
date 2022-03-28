@@ -13,17 +13,17 @@ int main()
 		cout << "[Welcome, below we have some options to choose from]" << endl;
 		cout << "---------------------------------------------------------" << endl;
 		cout << "| 1. Read AFD data from .txt file" << endl
-			<< "| 2. Show the quintuple for the read AFD .txt file" << endl
-			<< "| 3. Evaluate strings read from file" << endl
-			<< "| 4. Evaluate new strings by keyboard input" << endl
-			<< "| 0. close application" << endl << endl
-			<< endl << ">> Choose an option: ";
+		     << "| 2. Show the quintuple for the read AFD .txt file" << endl
+		     << "| 3. Evaluate strings read from file" << endl
+		     << "| 4. Evaluate new strings by keyboard input" << endl
+		     << "| 0. close application" << endl << endl
+		     << endl << ">> Choose an option: ";
 
 		cin >> option;
 
 		switch (option) {
 		case 0:
-			exit(0);
+			return 0;
 		case 1:
 			if (AFDReading())
 				controlFlag++;
