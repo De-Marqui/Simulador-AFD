@@ -3,14 +3,15 @@
 
 using namespace std;
 AFDConfig AFD = { 0,		// int LinesQTD;
-                  0,		// int symbolQTD;
-                  {},	  // vector<string> symbols;
-                  0,		// int stateNumber;
-                  0,		// int finalStateQTD;
-                  {},	  // vector<int> finalState;
-                  0,		// int transitionsQTD;
-                  {0, "", 0, false}	// struct transition transitionsStruct[30];
+		  0,		// int symbolQTD;
+		  {},		// vector<string> symbols;
+		  0,		// int stateNumber;
+		  0,		// int finalStateQTD;
+		  {},		// vector<int> finalState;
+		  0,		// int transitionsQTD;
+		  {0, "", 0, false}	// struct transition transitionsStruct[30];
 };
+
 
 bool isDigitNumber(int* Data, string line)
 {
@@ -107,6 +108,7 @@ bool AFDReading() {
 	} while (!file.is_open());
 
 
+	/* Primeira Linha A. */
 	getline(file, line);
 	if ((!isDigitNumber(&AFD.symbolQTD, line)) || AFD.symbolQTD > 12)
 	{
@@ -114,6 +116,7 @@ bool AFDReading() {
 		return 0;
 	}
 
+	/* Segunda Linha A. */
 	getline(file, line);
 	stringstream ss(line);
 	string temp;
@@ -159,12 +162,10 @@ bool AFDReading() {
 	bool wasUnique = (it == AFD.symbols.end());
 	if (!wasUnique)
 	{
-		cout << "[ERROR -> REPITED CHAR]" << endl;
+		cout << "[ERROR -> REPEATED CHAR]" << endl;
 		return 0;
 	}
 
-
-	/* Terceira Linha A. */
 	getline(file, line);
 	if (!isDigitNumber(&AFD.stateNumber, line)) return 0;
 	if (AFD.stateNumber > 30)
@@ -184,16 +185,22 @@ bool AFDReading() {
 	stringstream nums(line);
 	while (nums >> temp)
 	{
+
 		if (isdigit(temp[0]))
 		{
-			if (stoi(temp) <= AFD.stateNumber)
+			if (stoi(temp) < AFD.stateNumber && stoi(temp) >= 0)
 				AFD.finalState.push_back(stoi(temp));
 		}
 		else
 		{
-			cout << "[ERRO - NOT A INTEGER NUMBER WAS READED]\n" << endl;
+			cout << "[ERROR - NOT A INTEGER NUMBER WAS READED]\n" << endl;
 			return 0;
 		}
+	}
+	if (AFD.finalState.size() != AFD.finalStateQTD)
+	{
+		cout << endl << "[ERROR - finalStatesSymbolQTD != finalStatesQTD]\n" << endl;
+		return 0;
 	}
 
 	int  finalStateSize = AFD.finalState.size();
@@ -205,23 +212,45 @@ bool AFDReading() {
 
 	getline(file, line);
 	if (!isDigitNumber(&AFD.transitionsQTD, line)) return 0;
-
+	bool is = false, s = false, ns = false;
+	int initstatetemp = -1, nextstatetemp = -1;
+	string symbols = "null";
 	int flag = 0;
 	for (int i = 0; i < AFD.transitionsQTD; i++)
 	{
 		getline(file, line);
 		stringstream elem(line);
 		string tempor;
+
 		while (elem >> tempor)
 		{
+		
+
 			bool charSize = (tempor.size() == 1);
 			if (isdigit(tempor[0]) && flag == 0)
 			{
+				if (stoi(tempor) >= AFD.stateNumber)
+				{
+					cout << "\n[ERROR - STATE NOT DECLARED PRESENT IN TRANSITION LINE]\n";
+					return 0;
+				}
+
+				if (i == AFD.transitionsQTD - 1 && (stoi(tempor) == initstatetemp)) is = true;
+
+				initstatetemp = stoi(tempor);
 				AFD.transitionsStruct[i].initState = stoi(tempor);
 				flag++;
 			}
 			else if (isdigit(tempor[0]) && flag == 2)
 			{
+				if (stoi(tempor) >= AFD.stateNumber)
+				{
+					cout << "\n[ERROR - STATE NOT DECLARED PRESENT IN TRANSITION LINE]\n";
+					return 0;
+				}
+
+				if (i == AFD.transitionsQTD - 1 && (stoi(tempor) == nextstatetemp)) ns = true;
+				nextstatetemp = stoi(tempor);
 				AFD.transitionsStruct[i].nextState = stoi(tempor);
 
 				if (count(AFD.finalState.begin(), AFD.finalState.end(), AFD.transitionsStruct[i].nextState))
@@ -232,8 +261,17 @@ bool AFDReading() {
 			}
 			else
 			{
-				if ((isdigit(tempor[0]) || isalpha(tempor[0])) && charSize)
+				if ((isdigit(tempor[0]) || isalpha(tempor[0])) && charSize) {
+					if (!count(AFD.symbols.begin(), AFD.symbols.end(), string(1, tempor[0])))
+					{
+						cout << endl << "[ERROR -> SYMBOL " << tempor << " NOT INFORMED IN afd.txt]" << endl;
+						return 0;
+					}
+					
+					if (i == AFD.transitionsQTD - 1 && (tempor == symbols)) s = true;
+					symbols = tempor;
 					AFD.transitionsStruct[i].symbols = tempor;
+				}
 				else
 				{
 					cout << "[ERROR -> TRANSITION SYMBOL NOT INT OR ALPHA]" << endl;
@@ -241,8 +279,13 @@ bool AFDReading() {
 				}
 				flag++;
 			}
+			if (is && ns && s) {
+				cout << "\n[ERROR - MORE NUMBER OF TRANSITION STATES REPORTED THAN PRESENT]\n";
+				return 0;
+			}
 		}
 	}
+
 	cout << "[SUCCESS! -> .txt FILE READED!]" << endl;
 	return 1;
 }
@@ -261,7 +304,7 @@ void stringCheck(string cadeia)
 		char letter = cadeia[i];
 		if (!count(AFD.symbols.begin(), AFD.symbols.end(), string(1, letter)))
 		{
-			cout << endl << "[ERROR -> SYMBOL " << letter << " NOT INFORMED IN afd.txt]" << endl;
+			cout << "[ERROR -> SYMBOL " << letter << " NOT INFORMED IN afd.txt]" << endl << "[>> String Rejected <<]" << endl << endl;
 			return;
 		}
 
@@ -301,6 +344,7 @@ void fileReading() {
 
 	getline(file, line);
 	if (!isDigitNumber(&counter, line)) return;
+	int cadeiaSize = stoi(line);
 
 	while (getline(file, line))
 	{
@@ -313,7 +357,8 @@ void fileReading() {
 		cadeias.push_back(line);
 	}
 
-	int cadeiaSize = cadeias.size();
-	for (int i = 0; i < cadeiaSize; i++)
-		stringCheck(cadeias.at(i));
+	int linhascadeiaSize = cadeias.size();
+	for (int i = 0; i < cadeiaSize; i++) {
+		if (i < linhascadeiaSize) stringCheck(cadeias.at(i));
+	}	
 }
